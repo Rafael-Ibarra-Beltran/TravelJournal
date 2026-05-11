@@ -46,12 +46,15 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
 
         if (!TextUtils.isEmpty(trip.getImageUri())) {
             try {
+                holder.tripImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 holder.tripImageView.setImageURI(Uri.parse(trip.getImageUri()));
             } catch (RuntimeException ignored) {
-                holder.tripImageView.setImageDrawable(null);
+                holder.tripImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                holder.tripImageView.setImageResource(R.drawable.ic_image_placeholder);
             }
         } else {
-            holder.tripImageView.setImageDrawable(null);
+            holder.tripImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            holder.tripImageView.setImageResource(R.drawable.ic_image_placeholder);
         }
 
         holder.itemView.setOnClickListener(v -> listener.onTripClick(trip));

@@ -36,7 +36,8 @@ public class DetailActivity extends AppCompatActivity {
     private static final String STATE_DESCRIPTION = "state_description";
     private static final String STATE_RATING = "state_rating";
     private static final String STATE_IMAGE_URI = "state_image_uri";
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final String LEGACY_DATE_FORMAT = "yyyy-MM-dd";
 
     private TripDatabaseHelper databaseHelper;
     private long tripId = -1L;
@@ -116,6 +117,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void bindActions() {
+        findViewById(R.id.backButton).setOnClickListener(v -> finish());
         findViewById(R.id.selectImageButton).setOnClickListener(v -> imagePickerLauncher.launch(new String[]{"image/*"}));
         dateEditText.setOnClickListener(v -> showDatePicker());
         findViewById(R.id.saveButton).setOnClickListener(v -> saveTrip());
@@ -159,8 +161,7 @@ public class DetailActivity extends AppCompatActivity {
         String currentDate = dateEditText.getText().toString();
         if (!TextUtils.isEmpty(currentDate)) {
             try {
-                SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-                calendar.setTime(formatter.parse(currentDate));
+                calendar.setTime(parseDate(currentDate));
             } catch (ParseException ignored) {
                 // If the stored date is unexpected, fall back to today.
             }
@@ -169,7 +170,7 @@ public class DetailActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(
                 this,
                 (view, year, month, dayOfMonth) -> dateEditText.setText(String.format(Locale.getDefault(),
-                        "%04d-%02d-%02d", year, month + 1, dayOfMonth)),
+                        "%02d/%02d/%04d", dayOfMonth, month + 1, year)),
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
@@ -177,15 +178,30 @@ public class DetailActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private java.util.Date parseDate(String value) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        formatter.setLenient(false);
+        try {
+            return formatter.parse(value);
+        } catch (ParseException ignored) {
+            SimpleDateFormat legacyFormatter = new SimpleDateFormat(LEGACY_DATE_FORMAT, Locale.getDefault());
+            legacyFormatter.setLenient(false);
+            return legacyFormatter.parse(value);
+        }
+    }
+
     private void showImage() {
         if (TextUtils.isEmpty(imageUri)) {
-            detailImageView.setImageDrawable(null);
+            detailImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            detailImageView.setImageResource(R.drawable.ic_image_placeholder);
             return;
         }
         try {
+            detailImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             detailImageView.setImageURI(Uri.parse(imageUri));
         } catch (RuntimeException ex) {
-            detailImageView.setImageDrawable(null);
+            detailImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            detailImageView.setImageResource(R.drawable.ic_image_placeholder);
             Toast.makeText(this, R.string.image_error, Toast.LENGTH_SHORT).show();
         }
     }

@@ -17,6 +17,7 @@
     <string name="share_trip">Compartir</string>
     <string name="delete_trip">Eliminar</string>
     <string name="cancel">Cancelar</string>
+    <string name="back">Regresar</string>
     <string name="confirm_delete_title">Eliminar viaje</string>
     <string name="confirm_delete_message">¿Seguro que deseas eliminar este viaje?</string>
     <string name="trip_saved">Viaje guardado correctamente</string>

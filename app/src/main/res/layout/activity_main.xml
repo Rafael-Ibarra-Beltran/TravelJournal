@@ -6,16 +6,29 @@
     android:layout_height="match_parent"
     android:background="@color/notion_surface_soft"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:gravity="center_horizontal"
+    android:padding="22dp"
     tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/mainLogoImage"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:src="@drawable/travel_journal_logo" />
 
     <TextView
         android:id="@+id/mainTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="@string/main_title"
         android:textColor="@color/notion_ink"
-        android:textSize="28sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
@@ -23,17 +36,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
+        android:gravity="center"
         android:text="@string/main_subtitle"
         android:textColor="@color/notion_slate"
         android:textSize="16sp" />
 
     <Button
         android:id="@+id/addTripButton"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="18dp"
         android:background="@drawable/bg_button_primary"
         android:minHeight="44dp"
+        android:minWidth="156dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:text="@string/add_trip"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -44,11 +62,11 @@
         android:id="@+id/emptyStateLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/bg_card"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/bg_card_lavender"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="26dp">
 
         <TextView
             android:layout_width="match_parent"

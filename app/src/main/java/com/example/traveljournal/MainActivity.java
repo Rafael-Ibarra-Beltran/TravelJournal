@@ -133,12 +133,15 @@ public class MainActivity extends AppCompatActivity {
         tabletRatingText.setText("★ " + trip.getRating() + "/5");
         if (!TextUtils.isEmpty(trip.getImageUri())) {
             try {
+                tabletImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 tabletImageView.setImageURI(Uri.parse(trip.getImageUri()));
             } catch (RuntimeException ignored) {
-                tabletImageView.setImageDrawable(null);
+                tabletImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                tabletImageView.setImageResource(R.drawable.ic_image_placeholder);
             }
         } else {
-            tabletImageView.setImageDrawable(null);
+            tabletImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            tabletImageView.setImageResource(R.drawable.ic_image_placeholder);
         }
         tabletOpenButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, DetailActivity.class);

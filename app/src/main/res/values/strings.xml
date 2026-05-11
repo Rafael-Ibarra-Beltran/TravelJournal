@@ -28,4 +28,12 @@
     <string name="rating_required">Selecciona una calificación entre 1 y 5</string>
     <string name="share_title">Mi experiencia de viaje</string>
     <string name="tablet_empty_detail">Selecciona un viaje para ver su detalle</string>
+    <string name="search_trip_hint">Buscar por lugar</string>
+    <string name="filters_title">Buscar y ordenar</string>
+    <string name="rating_filter_label">Calificación mínima</string>
+    <string name="sort_filter_label">Ordenar por</string>
+    <string name="sort_direction_label">Dirección</string>
+    <string name="clear_filters">Limpiar</string>
+    <string name="empty_filtered_trips">No hay viajes con esos filtros</string>
+    <string name="empty_filtered_trips_hint">Prueba con otro lugar, calificación u orden.</string>
 </resources>

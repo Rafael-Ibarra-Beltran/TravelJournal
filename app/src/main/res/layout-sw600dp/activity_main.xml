@@ -22,7 +22,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/logo_content_description"
             android:scaleType="fitCenter"
             android:src="@drawable/travel_journal_logo" />
 
@@ -61,6 +61,65 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/statsPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card_mint"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/statsTotalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_total_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/statsAverageText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="4.7★" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_average_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/filterPanel"
@@ -275,42 +334,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
                 android:background="@drawable/bg_image_placeholder"
-                android:contentDescription="@string/select_image"
+                android:contentDescription="@string/trip_photo_content_description"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_image_placeholder" />
 
-            <TextView
-                android:id="@+id/tabletPlaceText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="22dp"
-                android:gravity="center"
-                android:textColor="@color/notion_ink"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                tools:text="Kioto" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tabletDateText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:textColor="@color/notion_slate"
-                android:textSize="16sp"
-                tools:text="2026-05-09" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tabletRatingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_badge_rating"
-                android:textColor="@color/notion_charcoal"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="★ 5/5" />
+                    <TextView
+                        android:id="@+id/tabletPlaceText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:textColor="@color/notion_ink"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        tools:text="Kioto" />
+
+                    <TextView
+                        android:id="@+id/tabletDateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="start"
+                        android:textColor="@color/notion_slate"
+                        android:textSize="16sp"
+                        tools:text="2026-05-09" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:gravity="end|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tabletCategoryText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_card_mint"
+                        android:paddingStart="14dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="6dp"
+                        android:textColor="@color/notion_charcoal"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Cultura" />
+
+                    <TextView
+                        android:id="@+id/tabletRatingText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_badge_rating"
+                        android:textColor="@color/notion_charcoal"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="★ 5/5" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tabletDescriptionText"

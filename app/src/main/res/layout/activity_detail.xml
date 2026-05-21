@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:background="@drawable/bg_image_placeholder"
-                android:contentDescription="@string/select_image"
+                android:contentDescription="@string/selected_trip_photo_content_description"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_image_placeholder" />
 
@@ -138,6 +138,22 @@
                 android:textColor="@color/notion_ink"
                 android:textColorHint="@color/notion_muted"
                 android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/category"
+                android:textColor="@color/notion_charcoal"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input" />
 
             <TextView
                 android:layout_width="match_parent"

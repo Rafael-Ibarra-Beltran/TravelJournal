@@ -16,7 +16,7 @@ import java.util.Locale;
 
 public class TripDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "travel_journal.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_TRIPS = "trips";
     private static final String COLUMN_ID = "id";
@@ -24,6 +24,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TRIP_DATE = "trip_date";
     private static final String COLUMN_DESCRIPTION = "description";
     private static final String COLUMN_RATING = "rating";
+    private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_IMAGE_URI = "image_uri";
     private static final String COLUMN_CREATED_AT = "created_at";
     private static final String COLUMN_UPDATED_AT = "updated_at";
@@ -40,6 +41,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TRIP_DATE + " TEXT NOT NULL, "
                 + COLUMN_DESCRIPTION + " TEXT NOT NULL, "
                 + COLUMN_RATING + " INTEGER NOT NULL, "
+                + COLUMN_CATEGORY + " TEXT NOT NULL DEFAULT 'Otro', "
                 + COLUMN_IMAGE_URI + " TEXT, "
                 + COLUMN_CREATED_AT + " TEXT, "
                 + COLUMN_UPDATED_AT + " TEXT"
@@ -48,8 +50,10 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIPS);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + TABLE_TRIPS + " ADD COLUMN "
+                    + COLUMN_CATEGORY + " TEXT NOT NULL DEFAULT 'Otro'");
+        }
     }
 
     public long insertTrip(Trip trip) {
@@ -103,6 +107,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TRIP_DATE, trip.getTripDate());
         values.put(COLUMN_DESCRIPTION, trip.getDescription());
         values.put(COLUMN_RATING, trip.getRating());
+        values.put(COLUMN_CATEGORY, trip.getCategory());
         values.put(COLUMN_IMAGE_URI, trip.getImageUri());
         return values;
     }
@@ -114,6 +119,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TRIP_DATE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_UPDATED_AT))

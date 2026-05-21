@@ -6,6 +6,7 @@ public class Trip {
     private String tripDate;
     private String description;
     private int rating;
+    private String category;
     private String imageUri;
     private String createdAt;
     private String updatedAt;
@@ -14,12 +15,13 @@ public class Trip {
     }
 
     public Trip(long id, String placeName, String tripDate, String description, int rating,
-                String imageUri, String createdAt, String updatedAt) {
+                String category, String imageUri, String createdAt, String updatedAt) {
         this.id = id;
         this.placeName = placeName;
         this.tripDate = tripDate;
         this.description = description;
         this.rating = rating;
+        this.category = category;
         this.imageUri = imageUri;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -63,6 +65,14 @@ public class Trip {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getImageUri() {

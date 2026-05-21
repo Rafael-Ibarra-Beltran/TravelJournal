@@ -13,8 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.widget.ArrayAdapter;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -37,10 +40,12 @@ public class DetailActivity extends AppCompatActivity {
     private static final String STATE_DATE = "state_date";
     private static final String STATE_DESCRIPTION = "state_description";
     private static final String STATE_RATING = "state_rating";
+    private static final String STATE_CATEGORY = "state_category";
     private static final String STATE_IMAGE_URI = "state_image_uri";
     private static final String STATE_SCROLL_Y = "state_scroll_y";
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String LEGACY_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String[] CATEGORIES = {"Ciudad", "Playa", "Montaña", "Comida", "Cultura", "Naturaleza", "Otro"};
 
     private TripDatabaseHelper databaseHelper;
     private long tripId = -1L;
@@ -51,6 +56,7 @@ public class DetailActivity extends AppCompatActivity {
     private EditText dateEditText;
     private EditText descriptionEditText;
     private RatingBar ratingBar;
+    private Spinner categorySpinner;
     private ImageView detailImageView;
     private Button shareButton;
     private Button deleteButton;
@@ -90,6 +96,7 @@ public class DetailActivity extends AppCompatActivity {
         databaseHelper = new TripDatabaseHelper(this);
         tripId = getIntent().getLongExtra(MainActivity.EXTRA_TRIP_ID, -1L);
         bindViews();
+        setupCategorySpinner();
         bindActions();
 
         if (savedInstanceState != null) {
@@ -108,6 +115,7 @@ public class DetailActivity extends AppCompatActivity {
         outState.putString(STATE_DATE, dateEditText.getText().toString());
         outState.putString(STATE_DESCRIPTION, descriptionEditText.getText().toString());
         outState.putFloat(STATE_RATING, ratingBar.getRating());
+        outState.putInt(STATE_CATEGORY, categorySpinner.getSelectedItemPosition());
         outState.putString(STATE_IMAGE_URI, imageUri);
         outState.putInt(STATE_SCROLL_Y, detailRoot.getScrollY());
     }
@@ -119,9 +127,16 @@ public class DetailActivity extends AppCompatActivity {
         dateEditText = findViewById(R.id.dateEditText);
         descriptionEditText = findViewById(R.id.descriptionEditText);
         ratingBar = findViewById(R.id.ratingBar);
+        categorySpinner = findViewById(R.id.categorySpinner);
         detailImageView = findViewById(R.id.detailImageView);
         shareButton = findViewById(R.id.shareButton);
         deleteButton = findViewById(R.id.deleteButton);
+    }
+
+    private void setupCategorySpinner() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CATEGORIES);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
     }
 
     private void bindActions() {
@@ -138,6 +153,7 @@ public class DetailActivity extends AppCompatActivity {
         dateEditText.setText(savedInstanceState.getString(STATE_DATE, ""));
         descriptionEditText.setText(savedInstanceState.getString(STATE_DESCRIPTION, ""));
         ratingBar.setRating(savedInstanceState.getFloat(STATE_RATING, 0f));
+        categorySpinner.setSelection(savedInstanceState.getInt(STATE_CATEGORY, CATEGORIES.length - 1));
         imageUri = savedInstanceState.getString(STATE_IMAGE_URI);
         pendingScrollY = savedInstanceState.getInt(STATE_SCROLL_Y, 0);
         showImage();
@@ -161,6 +177,7 @@ public class DetailActivity extends AppCompatActivity {
         dateEditText.setText(trip.getTripDate());
         descriptionEditText.setText(trip.getDescription());
         ratingBar.setRating(trip.getRating());
+        categorySpinner.setSelection(categoryToPosition(trip.getCategory()));
         imageUri = trip.getImageUri();
         showImage();
     }
@@ -191,6 +208,7 @@ public class DetailActivity extends AppCompatActivity {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         dialog.show();
     }
 
@@ -256,6 +274,8 @@ public class DetailActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(dateEditText.getText().toString().trim())) {
             dateEditText.setError(getString(R.string.required_field));
             valid = false;
+        } else if (!isValidPastOrTodayDate(dateEditText.getText().toString().trim())) {
+            valid = false;
         }
         if (TextUtils.isEmpty(descriptionEditText.getText().toString().trim())) {
             descriptionEditText.setError(getString(R.string.required_field));
@@ -274,8 +294,44 @@ public class DetailActivity extends AppCompatActivity {
         trip.setTripDate(dateEditText.getText().toString().trim());
         trip.setDescription(descriptionEditText.getText().toString().trim());
         trip.setRating(Math.round(ratingBar.getRating()));
+        trip.setCategory(categorySpinner.getSelectedItem().toString());
         trip.setImageUri(imageUri);
         return trip;
+    }
+
+    private boolean isValidPastOrTodayDate(String value) {
+        try {
+            Calendar selectedDate = Calendar.getInstance();
+            selectedDate.setTime(parseDate(value));
+            clearTime(selectedDate);
+
+            Calendar today = Calendar.getInstance();
+            clearTime(today);
+            if (selectedDate.after(today)) {
+                dateEditText.setError(getString(R.string.future_date_error));
+                return false;
+            }
+            return true;
+        } catch (ParseException ex) {
+            dateEditText.setError(getString(R.string.invalid_date_error));
+            return false;
+        }
+    }
+
+    private void clearTime(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private int categoryToPosition(String category) {
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            if (CATEGORIES[i].equals(category)) {
+                return i;
+            }
+        }
+        return CATEGORIES.length - 1;
     }
 
     private void shareTrip() {
@@ -285,12 +341,19 @@ public class DetailActivity extends AppCompatActivity {
         String shareText = getString(R.string.share_title) + "\n\n"
                 + "Lugar: " + placeNameEditText.getText().toString().trim() + "\n"
                 + "Fecha: " + dateEditText.getText().toString().trim() + "\n"
+                + "Categoría: " + categorySpinner.getSelectedItem().toString() + "\n"
                 + "Calificación: " + Math.round(ratingBar.getRating()) + "/5\n\n"
                 + "Descripción:\n" + descriptionEditText.getText().toString().trim();
 
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.setType("text/plain");
         sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        if (!TextUtils.isEmpty(imageUri)) {
+            sendIntent.setType("image/*");
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUri));
+            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            sendIntent.setType("text/plain");
+        }
         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_trip)));
     }
 

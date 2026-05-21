@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String STATE_SORT_DIRECTION = "sort_direction";
     private static final String STATE_SELECTED_TRIP_ID = "selected_trip_id";
     private static final String STATE_FILTERS_EXPANDED = "filters_expanded";
+    private static final String STATE_LIST_POSITION = "list_position";
 
     private static final int SORT_UPDATED = 0;
     private static final int SORT_PLACE = 1;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TripDatabaseHelper databaseHelper;
     private TripAdapter tripAdapter;
+    private LinearLayoutManager tripsLayoutManager;
     private LinearLayout emptyStateLayout;
     private TextView emptyTitleTextView;
     private TextView emptyHintTextView;
@@ -75,29 +77,27 @@ public class MainActivity extends AppCompatActivity {
     private int selectedSortBy = SORT_UPDATED;
     private int selectedSortDirection = DIRECTION_DESC;
     private boolean filtersExpanded = false;
+    private int pendingListPosition = RecyclerView.NO_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setupEdgeToEdgePadding();
 
         databaseHelper = new TripDatabaseHelper(this);
         emptyStateLayout = findViewById(R.id.emptyStateLayout);
         emptyTitleTextView = findViewById(R.id.emptyTitleText);
         emptyHintTextView = findViewById(R.id.emptyHintText);
         RecyclerView tripsRecyclerView = findViewById(R.id.tripsRecyclerView);
-        tripsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tripsLayoutManager = new LinearLayoutManager(this);
+        tripsRecyclerView.setLayoutManager(tripsLayoutManager);
         tripAdapter = new TripAdapter(this::openTrip);
         tripsRecyclerView.setAdapter(tripAdapter);
 
-        findViewById(R.id.addTripButton).setOnClickListener(v -> openNewTrip());
         restoreState(savedInstanceState);
+        findViewById(R.id.addTripButton).setOnClickListener(v -> openNewTrip());
         setupFilterControls();
         bindTabletViews();
     }
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(STATE_SORT_DIRECTION, selectedSortDirection);
         outState.putLong(STATE_SELECTED_TRIP_ID, selectedTripId);
         outState.putBoolean(STATE_FILTERS_EXPANDED, filtersExpanded);
+        outState.putInt(STATE_LIST_POSITION, tripsLayoutManager.findFirstVisibleItemPosition());
     }
 
     @Override
@@ -119,10 +120,22 @@ public class MainActivity extends AppCompatActivity {
         loadTrips();
     }
 
-    private void loadTrips() {
-        allTrips.clear();
-        allTrips.addAll(databaseHelper.getAllTrips());
-        applyFilters();
+    private void setupEdgeToEdgePadding() {
+        View mainView = findViewById(R.id.main);
+        int initialPaddingLeft = mainView.getPaddingLeft();
+        int initialPaddingTop = mainView.getPaddingTop();
+        int initialPaddingRight = mainView.getPaddingRight();
+        int initialPaddingBottom = mainView.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(
+                    initialPaddingLeft + systemBars.left,
+                    initialPaddingTop + systemBars.top,
+                    initialPaddingRight + systemBars.right,
+                    initialPaddingBottom + systemBars.bottom
+            );
+            return insets;
+        });
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -135,6 +148,13 @@ public class MainActivity extends AppCompatActivity {
         selectedSortDirection = savedInstanceState.getInt(STATE_SORT_DIRECTION, DIRECTION_DESC);
         selectedTripId = savedInstanceState.getLong(STATE_SELECTED_TRIP_ID, -1L);
         filtersExpanded = savedInstanceState.getBoolean(STATE_FILTERS_EXPANDED, false);
+        pendingListPosition = savedInstanceState.getInt(STATE_LIST_POSITION, RecyclerView.NO_POSITION);
+    }
+
+    private void loadTrips() {
+        allTrips.clear();
+        allTrips.addAll(databaseHelper.getAllTrips());
+        applyFilters();
     }
 
     private void setupFilterControls() {
@@ -239,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
         tripAdapter.submitList(filteredTrips);
         updateEmptyState(filteredTrips);
         updateTabletSelection(filteredTrips);
+        restoreListPositionIfNeeded(filteredTrips.size());
     }
 
     private Comparator<Trip> getTripComparator() {
@@ -291,9 +312,21 @@ public class MainActivity extends AppCompatActivity {
     private void openTrip(Trip trip) {
         selectedTripId = trip.getId();
         showTabletTrip(trip);
+        if (tabletDetailPanel != null) {
+            return;
+        }
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(EXTRA_TRIP_ID, trip.getId());
         startActivity(intent);
+    }
+
+    private void restoreListPositionIfNeeded(int itemCount) {
+        if (pendingListPosition == RecyclerView.NO_POSITION || itemCount == 0) {
+            return;
+        }
+        int position = Math.min(pendingListPosition, itemCount - 1);
+        pendingListPosition = RecyclerView.NO_POSITION;
+        tripsLayoutManager.scrollToPosition(position);
     }
 
     private void bindTabletViews() {

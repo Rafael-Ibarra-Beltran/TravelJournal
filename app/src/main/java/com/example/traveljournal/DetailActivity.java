@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     private static final String STATE_DESCRIPTION = "state_description";
     private static final String STATE_RATING = "state_rating";
     private static final String STATE_IMAGE_URI = "state_image_uri";
+    private static final String STATE_SCROLL_Y = "state_scroll_y";
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String LEGACY_DATE_FORMAT = "yyyy-MM-dd";
 
@@ -51,6 +54,8 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView detailImageView;
     private Button shareButton;
     private Button deleteButton;
+    private ScrollView detailRoot;
+    private int pendingScrollY = 0;
 
     private final ActivityResultLauncher<String[]> imagePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
@@ -93,6 +98,7 @@ public class DetailActivity extends AppCompatActivity {
             loadTrip();
         }
         updateMode();
+        restoreScrollIfNeeded();
     }
 
     @Override
@@ -103,9 +109,11 @@ public class DetailActivity extends AppCompatActivity {
         outState.putString(STATE_DESCRIPTION, descriptionEditText.getText().toString());
         outState.putFloat(STATE_RATING, ratingBar.getRating());
         outState.putString(STATE_IMAGE_URI, imageUri);
+        outState.putInt(STATE_SCROLL_Y, detailRoot.getScrollY());
     }
 
     private void bindViews() {
+        detailRoot = findViewById(R.id.detailRoot);
         detailTitleText = findViewById(R.id.detailTitleText);
         placeNameEditText = findViewById(R.id.placeNameEditText);
         dateEditText = findViewById(R.id.dateEditText);
@@ -131,13 +139,21 @@ public class DetailActivity extends AppCompatActivity {
         descriptionEditText.setText(savedInstanceState.getString(STATE_DESCRIPTION, ""));
         ratingBar.setRating(savedInstanceState.getFloat(STATE_RATING, 0f));
         imageUri = savedInstanceState.getString(STATE_IMAGE_URI);
+        pendingScrollY = savedInstanceState.getInt(STATE_SCROLL_Y, 0);
         showImage();
+    }
+
+    private void restoreScrollIfNeeded() {
+        if (pendingScrollY <= 0) {
+            return;
+        }
+        detailRoot.post(() -> detailRoot.scrollTo(0, pendingScrollY));
     }
 
     private void loadTrip() {
         Trip trip = databaseHelper.getTripById(tripId);
         if (trip == null) {
-            Toast.makeText(this, R.string.empty_trips, Toast.LENGTH_SHORT).show();
+            showAppToast(R.string.empty_trips);
             finish();
             return;
         }
@@ -202,7 +218,7 @@ public class DetailActivity extends AppCompatActivity {
         } catch (RuntimeException ex) {
             detailImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             detailImageView.setImageResource(R.drawable.ic_image_placeholder);
-            Toast.makeText(this, R.string.image_error, Toast.LENGTH_SHORT).show();
+            showAppToast(R.string.image_error);
         }
     }
 
@@ -215,18 +231,18 @@ public class DetailActivity extends AppCompatActivity {
         if (tripId == -1L) {
             long newId = databaseHelper.insertTrip(trip);
             if (newId != -1L) {
-                Toast.makeText(this, R.string.trip_saved, Toast.LENGTH_SHORT).show();
+                showAppToast(R.string.trip_saved);
                 finish();
             } else {
-                Toast.makeText(this, R.string.image_error, Toast.LENGTH_SHORT).show();
+                showAppToast(R.string.image_error);
             }
         } else {
             trip.setId(tripId);
             if (databaseHelper.updateTrip(trip) > 0) {
-                Toast.makeText(this, R.string.trip_updated, Toast.LENGTH_SHORT).show();
+                showAppToast(R.string.trip_updated);
                 finish();
             } else {
-                Toast.makeText(this, R.string.image_error, Toast.LENGTH_SHORT).show();
+                showAppToast(R.string.image_error);
             }
         }
     }
@@ -246,7 +262,7 @@ public class DetailActivity extends AppCompatActivity {
             valid = false;
         }
         if (ratingBar.getRating() < 1f || ratingBar.getRating() > 5f) {
-            Toast.makeText(this, R.string.rating_required, Toast.LENGTH_SHORT).show();
+            showAppToast(R.string.rating_required);
             valid = false;
         }
         return valid;
@@ -280,6 +296,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void confirmDelete() {
         new AlertDialog.Builder(this)
+                .setIcon(R.drawable.travel_journal_logo)
                 .setTitle(R.string.confirm_delete_title)
                 .setMessage(R.string.confirm_delete_message)
                 .setPositiveButton(R.string.delete_trip, (dialog, which) -> deleteTrip())
@@ -292,8 +309,21 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
         if (databaseHelper.deleteTrip(tripId) > 0) {
-            Toast.makeText(this, R.string.trip_deleted, Toast.LENGTH_SHORT).show();
+            showAppToast(R.string.trip_deleted);
             finish();
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void showAppToast(int messageResId) {
+        ViewGroup root = findViewById(android.R.id.content);
+        View toastView = getLayoutInflater().inflate(R.layout.toast_message, root, false);
+        TextView toastMessageText = toastView.findViewById(R.id.toastMessageText);
+        toastMessageText.setText(messageResId);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(toastView);
+        toast.show();
     }
 }

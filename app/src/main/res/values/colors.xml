@@ -2,4 +2,26 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="notion_primary">#5B4FD6</color>
+    <color name="notion_primary_pressed">#4539B8</color>
+    <color name="notion_primary_soft">#EEEAFE</color>
+    <color name="notion_canvas">#FFFFFF</color>
+    <color name="notion_surface">#F4F1EA</color>
+    <color name="notion_surface_soft">#FBF7EF</color>
+    <color name="notion_hairline">#E7DED2</color>
+    <color name="notion_hairline_strong">#CDBFAE</color>
+    <color name="notion_ink">#1A1A1A</color>
+    <color name="notion_charcoal">#37352F</color>
+    <color name="notion_slate">#5D5B54</color>
+    <color name="notion_steel">#787671</color>
+    <color name="notion_muted">#BBB8B1</color>
+    <color name="notion_lavender">#ECE7FF</color>
+    <color name="notion_mint">#DDF4E8</color>
+    <color name="notion_sky">#E1F0FF</color>
+    <color name="notion_peach">#FFE6D2</color>
+    <color name="notion_yellow">#FFF3C9</color>
+    <color name="notion_star">#FFC400</color>
+    <color name="notion_error">#E03131</color>
+    <color name="notion_error_pressed">#B92525</color>
+    <color name="notion_success">#1AAE39</color>
 </resources>

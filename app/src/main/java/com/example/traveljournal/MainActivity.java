@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout emptyStateLayout;
     private TextView emptyTitleTextView;
     private TextView emptyHintTextView;
+    private TextView statsTotalText;
+    private TextView statsAverageText;
     private EditText searchEditText;
     private Spinner ratingFilterSpinner;
     private Spinner sortBySpinner;
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tabletEmptyDetailText;
     private TextView tabletPlaceText;
     private TextView tabletDateText;
+    private TextView tabletCategoryText;
     private TextView tabletDescriptionText;
     private TextView tabletRatingText;
     private ImageView tabletImageView;
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         emptyStateLayout = findViewById(R.id.emptyStateLayout);
         emptyTitleTextView = findViewById(R.id.emptyTitleText);
         emptyHintTextView = findViewById(R.id.emptyHintText);
+        statsTotalText = findViewById(R.id.statsTotalText);
+        statsAverageText = findViewById(R.id.statsAverageText);
         RecyclerView tripsRecyclerView = findViewById(R.id.tripsRecyclerView);
         tripsLayoutManager = new LinearLayoutManager(this);
         tripsRecyclerView.setLayoutManager(tripsLayoutManager);
@@ -154,7 +159,26 @@ public class MainActivity extends AppCompatActivity {
     private void loadTrips() {
         allTrips.clear();
         allTrips.addAll(databaseHelper.getAllTrips());
+        updateTripStats();
         applyFilters();
+    }
+
+    private void updateTripStats() {
+        if (statsTotalText == null || statsAverageText == null) {
+            return;
+        }
+        statsTotalText.setText(String.valueOf(allTrips.size()));
+        if (allTrips.isEmpty()) {
+            statsAverageText.setText("0.0★");
+            return;
+        }
+
+        int ratingTotal = 0;
+        for (Trip trip : allTrips) {
+            ratingTotal += trip.getRating();
+        }
+        float average = (float) ratingTotal / allTrips.size();
+        statsAverageText.setText(String.format(Locale.getDefault(), "%.1f★", average));
     }
 
     private void setupFilterControls() {
@@ -334,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
         tabletEmptyDetailText = findViewById(R.id.tabletEmptyDetailText);
         tabletPlaceText = findViewById(R.id.tabletPlaceText);
         tabletDateText = findViewById(R.id.tabletDateText);
+        tabletCategoryText = findViewById(R.id.tabletCategoryText);
         tabletDescriptionText = findViewById(R.id.tabletDescriptionText);
         tabletRatingText = findViewById(R.id.tabletRatingText);
         tabletImageView = findViewById(R.id.tabletImageView);
@@ -371,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
         tabletEmptyDetailText.setVisibility(View.GONE);
         tabletPlaceText.setText(trip.getPlaceName());
         tabletDateText.setText(trip.getTripDate());
+        tabletCategoryText.setText(trip.getCategory());
         tabletDescriptionText.setText(trip.getDescription());
         tabletRatingText.setText("★ " + trip.getRating() + "/5");
         if (!TextUtils.isEmpty(trip.getImageUri())) {

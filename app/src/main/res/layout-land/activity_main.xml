@@ -30,7 +30,7 @@
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:layout_gravity="center_horizontal"
-                android:contentDescription="@string/app_name"
+                android:contentDescription="@string/logo_content_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/travel_journal_logo" />
 
@@ -70,6 +70,54 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/statsPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card_mint"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/statsTotalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="3" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_total_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/statsAverageText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="4.7★" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_average_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/filterPanel"

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.traveljournal.R;
@@ -41,6 +42,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         Trip trip = trips.get(position);
         holder.placeNameTextView.setText(trip.getPlaceName());
         holder.tripDateTextView.setText(trip.getTripDate());
+        holder.categoryTextView.setText(trip.getCategory());
         holder.descriptionPreviewTextView.setText(shortDescription(trip.getDescription()));
         holder.ratingTextView.setText("★ " + trip.getRating() + "/5");
 
@@ -66,9 +68,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     }
 
     public void submitList(List<Trip> newTrips) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TripDiffCallback(trips, newTrips));
         trips.clear();
         trips.addAll(newTrips);
-        notifyDataSetChanged();
+        diffResult.dispatchUpdatesTo(this);
     }
 
     private String shortDescription(String description) {
@@ -85,6 +88,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         final ImageView tripImageView;
         final TextView placeNameTextView;
         final TextView tripDateTextView;
+        final TextView categoryTextView;
         final TextView descriptionPreviewTextView;
         final TextView ratingTextView;
 
@@ -93,8 +97,54 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             tripImageView = itemView.findViewById(R.id.tripImageView);
             placeNameTextView = itemView.findViewById(R.id.placeNameTextView);
             tripDateTextView = itemView.findViewById(R.id.tripDateTextView);
+            categoryTextView = itemView.findViewById(R.id.categoryTextView);
             descriptionPreviewTextView = itemView.findViewById(R.id.descriptionPreviewTextView);
             ratingTextView = itemView.findViewById(R.id.ratingTextView);
+        }
+    }
+
+    private static class TripDiffCallback extends DiffUtil.Callback {
+        private final List<Trip> oldTrips;
+        private final List<Trip> newTrips;
+
+        TripDiffCallback(List<Trip> oldTrips, List<Trip> newTrips) {
+            this.oldTrips = oldTrips;
+            this.newTrips = newTrips;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldTrips.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newTrips.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldTrips.get(oldItemPosition).getId() == newTrips.get(newItemPosition).getId();
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            Trip oldTrip = oldTrips.get(oldItemPosition);
+            Trip newTrip = newTrips.get(newItemPosition);
+            return oldTrip.getRating() == newTrip.getRating()
+                    && sameText(oldTrip.getPlaceName(), newTrip.getPlaceName())
+                    && sameText(oldTrip.getTripDate(), newTrip.getTripDate())
+                    && sameText(oldTrip.getDescription(), newTrip.getDescription())
+                    && sameText(oldTrip.getCategory(), newTrip.getCategory())
+                    && sameText(oldTrip.getImageUri(), newTrip.getImageUri())
+                    && sameText(oldTrip.getUpdatedAt(), newTrip.getUpdatedAt());
+        }
+
+        private boolean sameText(String first, String second) {
+            if (first == null) {
+                return second == null;
+            }
+            return first.equals(second);
         }
     }
 }

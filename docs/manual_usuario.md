@@ -12,17 +12,18 @@ Travel Journal permite guardar viajes y lugares visitados en el dispositivo. La 
 
 1. Pulsa "Nuevo viaje".
 2. Escribe el nombre del lugar.
-3. Pulsa el campo de fecha y selecciona la fecha del viaje.
+3. Pulsa el campo de fecha y selecciona la fecha del viaje. La app solo permite elegir fechas de hoy o anteriores.
 4. Escribe una descripción de la experiencia.
-5. Selecciona una calificación entre 1 y 5 estrellas.
-6. Opcionalmente pulsa "Seleccionar imagen" para elegir una foto desde la galería.
-7. Pulsa "Guardar".
-8. La app muestra una confirmación y regresa a la lista principal.
+5. Selecciona una categoría para clasificar el viaje.
+6. Selecciona una calificación entre 1 y 5 estrellas.
+7. Opcionalmente pulsa "Seleccionar imagen" para elegir una foto desde la galería.
+8. Pulsa "Guardar".
+9. La app muestra una confirmación y regresa a la lista principal.
 
 ## Consultar un viaje
 
 1. En la pantalla principal, pulsa la tarjeta del viaje.
-2. La pantalla de edición muestra el nombre, fecha, descripción, calificación e imagen guardada.
+2. La pantalla de edición muestra el nombre, fecha, categoría, descripción, calificación e imagen guardada.
 3. Para regresar sin cambios, usa el botón de volver del dispositivo.
 
 ## Editar un viaje
@@ -45,7 +46,8 @@ Travel Journal permite guardar viajes y lugares visitados en el dispositivo. La 
 2. Pulsa "Compartir".
 3. Android muestra las aplicaciones compatibles instaladas.
 4. Elige una app como correo, mensajes o WhatsApp.
-5. La app comparte un texto con lugar, fecha, calificación y descripción.
+5. La app comparte un texto con lugar, fecha, categoría, calificación y descripción.
+6. Si el viaje tiene imagen, también se adjunta la foto seleccionada.
 
 ## Uso en teléfono y tableta
 
@@ -65,5 +67,7 @@ Antes de guardar, la app exige:
 - Fecha del viaje.
 - Descripción.
 - Calificación entre 1 y 5.
+
+La fecha debe tener formato válido y no puede ser futura.
 
 Si falta información, se muestra un mensaje claro y el viaje no se guarda.

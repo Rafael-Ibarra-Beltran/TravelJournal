@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.traveljournal.R;
+import com.example.traveljournal.MainActivity;
 import com.example.traveljournal.model.Trip;
+import com.example.traveljournal.util.MoneyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,17 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         void onTripClick(Trip trip);
     }
 
-    private final List<Trip> trips = new ArrayList<>();
-    private final OnTripClickListener listener;
+    public interface OnTripShareListener {
+        void onTripShare(Trip trip);
+    }
 
-    public TripAdapter(OnTripClickListener listener) {
-        this.listener = listener;
+    private final List<Trip> trips = new ArrayList<>();
+    private final OnTripClickListener clickListener;
+    private final OnTripShareListener shareListener;
+
+    public TripAdapter(OnTripClickListener clickListener, OnTripShareListener shareListener) {
+        this.clickListener = clickListener;
+        this.shareListener = shareListener;
     }
 
     @NonNull
@@ -43,7 +51,11 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.placeNameTextView.setText(trip.getPlaceName());
         holder.tripDateTextView.setText(trip.getTripDate());
         holder.categoryTextView.setText(trip.getCategory());
-        holder.descriptionPreviewTextView.setText(shortDescription(trip.getDescription()));
+        holder.categoryTextView.setBackgroundResource(MainActivity.categoryBackground(trip.getCategory()));
+        holder.favoriteTextView.setVisibility(trip.isFavorite() ? View.VISIBLE : View.GONE);
+        holder.descriptionPreviewTextView.setText(shortDescription(trip.getDescription())
+                + "\n" + "Con: " + optionalText(trip.getCompanions())
+                + " · " + MoneyUtils.format(trip.getBudget()));
         holder.ratingTextView.setText("★ " + trip.getRating() + "/5");
 
         if (!TextUtils.isEmpty(trip.getImageUri())) {
@@ -59,7 +71,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             holder.tripImageView.setImageResource(R.drawable.ic_image_placeholder);
         }
 
-        holder.itemView.setOnClickListener(v -> listener.onTripClick(trip));
+        holder.itemView.setOnClickListener(v -> clickListener.onTripClick(trip));
+        holder.shareTripButton.setOnClickListener(v -> shareListener.onTripShare(trip));
     }
 
     @Override
@@ -84,13 +97,19 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         return description.substring(0, 87).trim() + "...";
     }
 
+    private String optionalText(String value) {
+        return TextUtils.isEmpty(value) ? "No especificado" : value;
+    }
+
     static class TripViewHolder extends RecyclerView.ViewHolder {
         final ImageView tripImageView;
         final TextView placeNameTextView;
         final TextView tripDateTextView;
         final TextView categoryTextView;
+        final TextView favoriteTextView;
         final TextView descriptionPreviewTextView;
         final TextView ratingTextView;
+        final ImageView shareTripButton;
 
         TripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,8 +117,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             placeNameTextView = itemView.findViewById(R.id.placeNameTextView);
             tripDateTextView = itemView.findViewById(R.id.tripDateTextView);
             categoryTextView = itemView.findViewById(R.id.categoryTextView);
+            favoriteTextView = itemView.findViewById(R.id.favoriteTextView);
             descriptionPreviewTextView = itemView.findViewById(R.id.descriptionPreviewTextView);
             ratingTextView = itemView.findViewById(R.id.ratingTextView);
+            shareTripButton = itemView.findViewById(R.id.shareTripButton);
         }
     }
 
@@ -136,6 +157,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
                     && sameText(oldTrip.getTripDate(), newTrip.getTripDate())
                     && sameText(oldTrip.getDescription(), newTrip.getDescription())
                     && sameText(oldTrip.getCategory(), newTrip.getCategory())
+                    && oldTrip.isFavorite() == newTrip.isFavorite()
+                    && sameText(oldTrip.getCompanions(), newTrip.getCompanions())
+                    && oldTrip.getBudget() == newTrip.getBudget()
                     && sameText(oldTrip.getImageUri(), newTrip.getImageUri())
                     && sameText(oldTrip.getUpdatedAt(), newTrip.getUpdatedAt());
         }

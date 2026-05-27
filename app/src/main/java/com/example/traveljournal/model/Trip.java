@@ -7,6 +7,9 @@ public class Trip {
     private String description;
     private int rating;
     private String category;
+    private boolean favorite;
+    private String companions;
+    private double budget;
     private String imageUri;
     private String createdAt;
     private String updatedAt;
@@ -15,13 +18,17 @@ public class Trip {
     }
 
     public Trip(long id, String placeName, String tripDate, String description, int rating,
-                String category, String imageUri, String createdAt, String updatedAt) {
+                String category, boolean favorite, String companions, double budget,
+                String imageUri, String createdAt, String updatedAt) {
         this.id = id;
         this.placeName = placeName;
         this.tripDate = tripDate;
         this.description = description;
         this.rating = rating;
         this.category = category;
+        this.favorite = favorite;
+        this.companions = companions;
+        this.budget = budget;
         this.imageUri = imageUri;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -73,6 +80,30 @@ public class Trip {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public String getCompanions() {
+        return companions;
+    }
+
+    public void setCompanions(String companions) {
+        this.companions = companions;
+    }
+
+    public double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(double budget) {
+        this.budget = budget;
     }
 
     public String getImageUri() {

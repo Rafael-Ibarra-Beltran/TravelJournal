@@ -117,6 +117,136 @@
                     android:textColor="@color/notion_slate"
                     android:textSize="12sp" />
 
+                <TextView
+                    android:id="@+id/statsFavoriteText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="2" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_favorites_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dashboardExtraHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_card_lavender"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dashboard_extra_title"
+                    android:textColor="@color/notion_ink"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dashboardToggleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⌄"
+                    android:textColor="@color/notion_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dashboardExtraPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_card_lavender"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/statsBudgetText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    android:textStyle="bold"
+                    tools:text="$ 2,000.00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_budget_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/statsBestText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    tools:text="Kioto" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_best_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/statsLatestText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    tools:text="Cancún" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_latest_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/statsCategoryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:textColor="@color/notion_ink"
+                    tools:text="Playa" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stats_category_label"
+                    android:textColor="@color/notion_slate"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -177,6 +307,32 @@
                         android:textColor="@color/notion_ink"
                         android:textColorHint="@color/notion_steel"
                         android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/favoriteFilterCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="8dp"
+                        android:buttonTint="@color/notion_primary"
+                        android:text="@string/favorite_filter_label"
+                        android:textColor="@color/notion_charcoal"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/category_filter_label"
+                        android:textColor="@color/notion_slate"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/categoryFilterSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/bg_filter_control" />
 
                     <TextView
                         android:layout_width="match_parent"

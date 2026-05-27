@@ -46,14 +46,33 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <ImageView
-                android:id="@+id/detailImageView"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:background="@drawable/bg_image_placeholder"
-                android:contentDescription="@string/selected_trip_photo_content_description"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_image_placeholder" />
+                android:layout_height="220dp">
+
+                <ImageView
+                    android:id="@+id/detailImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_image_placeholder"
+                    android:contentDescription="@string/selected_trip_photo_content_description"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_image_placeholder" />
+
+                <TextView
+                    android:id="@+id/removeMainImageButton"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_button_danger"
+                    android:gravity="center"
+                    android:text="X"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/selectImageButton"
@@ -75,6 +94,115 @@
                 android:textAllCaps="false"
                 android:textColor="@color/notion_primary"
                 android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/addGalleryPhotoButton"
+                android:layout_width="220dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_button_secondary"
+                android:gravity="center"
+                android:text="@string/add_gallery_photo"
+                android:textAllCaps="false"
+                android:textColor="@color/notion_primary"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/gallerySlotOne"
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/galleryImageOne"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_image_placeholder"
+                        android:contentDescription="@string/trip_photo_content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_image_placeholder" />
+
+                    <TextView
+                        android:id="@+id/galleryRemoveOne"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_button_danger"
+                        android:gravity="center"
+                        android:text="X"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/gallerySlotTwo"
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/galleryImageTwo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_image_placeholder"
+                        android:contentDescription="@string/trip_photo_content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_image_placeholder" />
+
+                    <TextView
+                        android:id="@+id/galleryRemoveTwo"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_button_danger"
+                        android:gravity="center"
+                        android:text="X"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/gallerySlotThree"
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/galleryImageThree"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_image_placeholder"
+                        android:contentDescription="@string/trip_photo_content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_image_placeholder" />
+
+                    <TextView
+                        android:id="@+id/galleryRemoveThree"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_button_danger"
+                        android:gravity="center"
+                        android:text="X"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -143,6 +271,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:text="@string/companions"
+                android:textColor="@color/notion_charcoal"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/companionsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:inputType="textCapWords"
+                android:textColor="@color/notion_ink"
+                android:textColorHint="@color/notion_muted"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/budget"
+                android:textColor="@color/notion_charcoal"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/budgetEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:inputType="numberDecimal"
+                android:textColor="@color/notion_ink"
+                android:textColorHint="@color/notion_muted"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="@string/category"
                 android:textColor="@color/notion_charcoal"
                 android:textSize="14sp"
@@ -154,6 +322,17 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input" />
+
+            <CheckBox
+                android:id="@+id/favoriteCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:buttonTint="@color/notion_primary"
+                android:text="@string/favorite_trip"
+                android:textColor="@color/notion_charcoal"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -196,27 +375,6 @@
             android:text="@string/save_trip"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/shareButton"
-            android:layout_width="220dp"
-            android:layout_height="46dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_button_secondary"
-            android:gravity="center"
-            android:minWidth="190dp"
-            android:paddingStart="28dp"
-            android:paddingEnd="28dp"
-            android:shadowColor="#33000000"
-            android:shadowDx="0"
-            android:shadowDy="1"
-            android:shadowRadius="1.5"
-            android:singleLine="true"
-            android:text="@string/share_trip"
-            android:textAllCaps="false"
-            android:textColor="@color/notion_primary"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton

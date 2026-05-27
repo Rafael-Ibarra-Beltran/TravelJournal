@@ -16,15 +16,20 @@ import java.util.Locale;
 
 public class TripDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "travel_journal.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String TABLE_TRIPS = "trips";
+    private static final String TABLE_TRIP_IMAGES = "trip_images";
     private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TRIP_ID = "trip_id";
     private static final String COLUMN_PLACE_NAME = "place_name";
     private static final String COLUMN_TRIP_DATE = "trip_date";
     private static final String COLUMN_DESCRIPTION = "description";
     private static final String COLUMN_RATING = "rating";
     private static final String COLUMN_CATEGORY = "category";
+    private static final String COLUMN_FAVORITE = "is_favorite";
+    private static final String COLUMN_COMPANIONS = "companions";
+    private static final String COLUMN_BUDGET = "budget";
     private static final String COLUMN_IMAGE_URI = "image_uri";
     private static final String COLUMN_CREATED_AT = "created_at";
     private static final String COLUMN_UPDATED_AT = "updated_at";
@@ -42,10 +47,14 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_DESCRIPTION + " TEXT NOT NULL, "
                 + COLUMN_RATING + " INTEGER NOT NULL, "
                 + COLUMN_CATEGORY + " TEXT NOT NULL DEFAULT 'Otro', "
+                + COLUMN_FAVORITE + " INTEGER NOT NULL DEFAULT 0, "
+                + COLUMN_COMPANIONS + " TEXT, "
+                + COLUMN_BUDGET + " REAL NOT NULL DEFAULT 0, "
                 + COLUMN_IMAGE_URI + " TEXT, "
                 + COLUMN_CREATED_AT + " TEXT, "
                 + COLUMN_UPDATED_AT + " TEXT"
                 + ")");
+        createTripImagesTable(db);
     }
 
     @Override
@@ -53,6 +62,17 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 2) {
             db.execSQL("ALTER TABLE " + TABLE_TRIPS + " ADD COLUMN "
                     + COLUMN_CATEGORY + " TEXT NOT NULL DEFAULT 'Otro'");
+        }
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE " + TABLE_TRIPS + " ADD COLUMN "
+                    + COLUMN_FAVORITE + " INTEGER NOT NULL DEFAULT 0");
+        }
+        if (oldVersion < 4) {
+            db.execSQL("ALTER TABLE " + TABLE_TRIPS + " ADD COLUMN "
+                    + COLUMN_COMPANIONS + " TEXT");
+            db.execSQL("ALTER TABLE " + TABLE_TRIPS + " ADD COLUMN "
+                    + COLUMN_BUDGET + " REAL NOT NULL DEFAULT 0");
+            createTripImagesTable(db);
         }
     }
 
@@ -98,7 +118,33 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 
     public int deleteTrip(long id) {
         SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TRIP_IMAGES, COLUMN_TRIP_ID + " = ?", new String[]{String.valueOf(id)});
         return db.delete(TABLE_TRIPS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public List<String> getTripImages(long tripId) {
+        List<String> imageUris = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        try (Cursor cursor = db.query(TABLE_TRIP_IMAGES, new String[]{COLUMN_IMAGE_URI}, COLUMN_TRIP_ID + " = ?",
+                new String[]{String.valueOf(tripId)}, null, null, COLUMN_ID + " ASC")) {
+            while (cursor.moveToNext()) {
+                imageUris.add(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI)));
+            }
+        }
+        return imageUris;
+    }
+
+    public void replaceTripImages(long tripId, List<String> imageUris) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TRIP_IMAGES, COLUMN_TRIP_ID + " = ?", new String[]{String.valueOf(tripId)});
+        int limit = Math.min(imageUris.size(), 3);
+        for (int i = 0; i < limit; i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_TRIP_ID, tripId);
+            values.put(COLUMN_IMAGE_URI, imageUris.get(i));
+            values.put(COLUMN_CREATED_AT, now());
+            db.insert(TABLE_TRIP_IMAGES, null, values);
+        }
     }
 
     private ContentValues toValues(Trip trip) {
@@ -108,6 +154,9 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DESCRIPTION, trip.getDescription());
         values.put(COLUMN_RATING, trip.getRating());
         values.put(COLUMN_CATEGORY, trip.getCategory());
+        values.put(COLUMN_FAVORITE, trip.isFavorite() ? 1 : 0);
+        values.put(COLUMN_COMPANIONS, trip.getCompanions());
+        values.put(COLUMN_BUDGET, trip.getBudget());
         values.put(COLUMN_IMAGE_URI, trip.getImageUri());
         return values;
     }
@@ -120,10 +169,23 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FAVORITE)) == 1,
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_COMPANIONS)),
+                cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_BUDGET)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_UPDATED_AT))
         );
+    }
+
+    private void createTripImagesTable(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_TRIP_IMAGES + " ("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_TRIP_ID + " INTEGER NOT NULL, "
+                + COLUMN_IMAGE_URI + " TEXT NOT NULL, "
+                + COLUMN_CREATED_AT + " TEXT, "
+                + "FOREIGN KEY(" + COLUMN_TRIP_ID + ") REFERENCES " + TABLE_TRIPS + "(" + COLUMN_ID + ")"
+                + ")");
     }
 
     private String now() {
